@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "hogan": "^1.0.2",
     "benchmark": "^1.0.0",
+    "dot": "^1.0.3",
+    "hogan": "^1.0.2",
     "lodash": "^3.9.3",
     "microtime": "^1.4.2",
     "mustache": "^2.1.2"
