@@ -9,7 +9,8 @@
     "hogan": "^1.0.2",
     "lodash": "^3.9.3",
     "microtime": "^1.4.2",
-    "mustache": "^2.1.2"
+    "mustache": "^2.1.2",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {},
   "scripts": {

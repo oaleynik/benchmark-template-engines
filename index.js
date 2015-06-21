@@ -5,12 +5,16 @@ var Dot = require('dot');
 var Lodash = require('lodash');
 Lodash.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
 
+var Underscore = require('underscore');
+Underscore.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
+
 ///////////// Define template strings and context
 
 var templateStrings = {
   Mustache: 'Hello, {{name}}!',
   Hogan: 'Hello, {{name}}!',
   Lodash: 'Hello, {{name}}!',
+  Underscore: 'Hello, {{name}}!',
   Dot: 'Hello, {{=it.name}}!'
 };
 
@@ -21,6 +25,7 @@ var ctx = { name: 'Oleg' };
 Mustache.parse(templateStrings.Mustache);
 var hoganTpl = Hogan.compile(templateStrings.Hogan);
 var lodashTpl = Lodash.template(templateStrings.Lodash);
+var underscoreTpl = Underscore.template(templateStrings.Underscore);
 var dotTpl = Dot.template(templateStrings.Dot);
 
 ///////////// Define benchmark cases
@@ -34,6 +39,9 @@ var benchmarks = {
   },
   'Lodash#template': function() {
     lodashTpl(ctx);
+  },
+  'Underscore#template': function() {
+    underscoreTpl(ctx);
   },
   'doT#template': function() {
     dotTpl(ctx);
