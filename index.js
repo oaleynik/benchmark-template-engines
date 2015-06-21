@@ -1,7 +1,10 @@
+var Benchmark = require('benchmark');
+
 var Mustache = require('mustache');
 var Hogan = require('Hogan');
 var Dot = require('dot');
 var Handlebars = require('handlebars');
+var Dust = require('dustjs-linkedin');
 
 var Lodash = require('lodash');
 Lodash.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
@@ -17,7 +20,8 @@ var templateStrings = {
   Hogan: 'Hello, {{name}}!',
   Lodash: 'Hello, {{name}}!',
   Underscore: 'Hello, {{name}}!',
-  Dot: 'Hello, {{=it.name}}!'
+  Dot: 'Hello, {{=it.name}}!',
+  Dust: 'Hello, {name}!'
 };
 
 var ctx = { name: 'Oleg' };
@@ -31,33 +35,61 @@ var lodashTpl = Lodash.template(templateStrings.Lodash);
 var underscoreTpl = Underscore.template(templateStrings.Underscore);
 var dotTpl = Dot.template(templateStrings.Dot);
 
+var compiledDustTpl = Dust.compile(templateStrings.Dust, 'hello');
+Dust.loadSource(compiledDustTpl);
+
 ///////////// Define benchmark cases
 
 var benchmarks = {
-  'Mustache#render': function() {
-    Mustache.render(templateStrings.Mustache, ctx);
+  'Mustache#render': {
+    fn: function() {
+      Mustache.render(templateStrings.Mustache, ctx);
+    }
   },
-  'Handlebars#template': function() {
-    handlebarsTpl(ctx);
+  'Handlebars#template': {
+    fn: function() {
+      handlebarsTpl(ctx);
+    }
   },
-  'Hogan#render': function() {
-    hoganTpl.render(ctx);
+  'Hogan#render': {
+    fn: function() {
+      hoganTpl.render(ctx);
+    }
   },
-  'Lodash#template': function() {
-    lodashTpl(ctx);
+  'Lodash#template': {
+    fn: function() {
+      lodashTpl(ctx);
+    }
   },
-  'Underscore#template': function() {
-    underscoreTpl(ctx);
+  'Underscore#template': {
+    fn: function() {
+      underscoreTpl(ctx);
+    }
   },
-  'doT#template': function() {
-    dotTpl(ctx);
+  'doT#template': {
+    fn: function() {
+      dotTpl(ctx);
+    }
+  },
+  'Dust#render': {
+    defer: true,
+    fn: function(deferred) {
+      Dust.render('hello', ctx, function(err, out) {
+        if ( err ) return deferred.reject( err );
+
+        deferred.resolve();
+      });
+    }
   }
 };
 
 ///////////// Initialise suite
 
-var Benchmark = require('benchmark');
-var suite = new Benchmark.Suite;
+var suite = new Benchmark.Suite({
+  onError: function(error) {
+    console.log(error);
+  }
+});
 
 suite
   .on('cycle', function(event) {
